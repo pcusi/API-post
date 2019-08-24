@@ -40,6 +40,10 @@ function createUser(req, res) {
     });
 }
 
+function userLogIn(req, res) {
+    
+}
+
 module.exports = {
     createUser
 }
