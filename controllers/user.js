@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
+const jwt = require('../middlewares/jwt');
 
 function createUser(req, res) {
     const u = new Users();
@@ -41,9 +42,30 @@ function createUser(req, res) {
 }
 
 function userLogIn(req, res) {
-    
+    const body = req.body;
+    const email = body.email;
+    const password = body.password;
+    /* **** Buscamos el campo email para poder iniciar sesion **** */
+    Users.findOne({ email: email }, (err, user) => {
+        if (err) res.status(500).send({ message: 'Este correo, no existe' });
+        if (user) {
+            bcrypt.compare(password, user.password, (err, same) => {
+                if (same) {
+                    return res.status(200).send({
+                        token: jwt.createToken(user)
+                    })
+                } else {
+                    user.password = null;
+                    return res.status(200).send({ user });
+                }
+            });
+        } else {
+            return res.status(400).send({ message: 'Este usuario no esta disponible' });
+        }
+    });
 }
 
 module.exports = {
-    createUser
+    createUser,
+    userLogIn
 }
