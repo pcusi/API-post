@@ -1,4 +1,4 @@
-const Users = require('../models/User');
+const User = require('../models/User');
 const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -6,7 +6,7 @@ const moment = require('moment');
 const jwt = require('../middlewares/jwt');
 
 function createUser(req, res) {
-    const u = new Users();
+    const u = new User();
     const body = req.body;
     u.nickname = body.nickname;
     u.names = body.names;
@@ -18,7 +18,7 @@ function createUser(req, res) {
     u.avatar = 'null';
 
     /* **** Condicion, en caso de que un usuario elija un nickname que ya exista en la plataforma **** */
-    Users.find({
+    User.find({
         $or: [
             { nickname: body.nickname }
         ]
@@ -46,7 +46,7 @@ function userLogIn(req, res) {
     const email = body.email;
     const password = body.password;
     /* **** Buscamos el campo email para poder iniciar sesion **** */
-    Users.findOne({ email: email }, (err, user) => {
+    User.findOne({ email: email }, (err, user) => {
         if (err) res.status(500).send({ message: 'Este correo, no existe' });
         if (user) {
             bcrypt.compare(password, user.password, (err, same) => {
