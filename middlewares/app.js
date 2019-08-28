@@ -8,6 +8,7 @@ app.use(bp.json());
 
 /* **** RUTAS ESPECIFICAS DE LA API PARA QUE SEAN CONSUMIDAS DESDE EL FRONT END **** */
 const userR = require('../routes/user.routes');
-app.use('/api/post-v1', userR);
+const postR = require('../routes/post.routes');
+app.use('/api/post-v1', [userR, postR]);
 
 module.exports = app;
